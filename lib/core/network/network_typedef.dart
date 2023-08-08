@@ -1,0 +1,1 @@
+typedef NetworkCallBack<R> = R Function(dynamic);
