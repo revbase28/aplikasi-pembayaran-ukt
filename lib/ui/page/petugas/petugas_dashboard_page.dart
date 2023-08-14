@@ -3,12 +3,42 @@ import 'package:aplikasi_pembayaran_ukt/core/theme.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/widget/generic_button.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/widget/petugas_detail_per_semester_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../cubit/auth_cubit.dart';
 
 class PetugasDashboardPage extends StatelessWidget {
   const PetugasDashboardPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+
+    AlertDialog logOutConfirmationDialog() {
+      Widget cancelButton = ElevatedButton(
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade500),
+        child: Text("Cancel", style: whiteTextStyle),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      );
+
+      Widget confirmButton = TextButton(
+        child: Text(
+          "Yakin",
+          style: redTextStyle.copyWith(color: Colors.red.shade500),
+        ),
+        onPressed: () {
+          context.read<AuthCubit>().logout();
+          Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
+        },
+      );
+
+      return AlertDialog(
+        title: Text("Anda yakin ingin logout"),
+        actions: [cancelButton, confirmButton],
+      );
+    }
+
     Widget moneyInCard() {
       return Container(
         width: double.infinity,
@@ -43,10 +73,22 @@ class PetugasDashboardPage extends StatelessWidget {
             body: ListView(
       padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 24),
       children: [
-        Text("Halo Petugas",
-            style: blackTextStyle.copyWith(fontWeight: semiBold, fontSize: 24)),
-        Text("Tahun ajaran 2022/2023",
-            style: greyTextStyle.copyWith(fontSize: 16)),
+        Row(
+          children: [
+            Expanded(
+              child: Text("Halo Petugas",
+                  style: blackTextStyle.copyWith(fontWeight: semiBold, fontSize: 24)),
+            ),
+            const SizedBox(width: 8),
+            IconButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) => logOutConfirmationDialog());
+                },
+                icon: const Icon(Icons.logout))
+          ],
+        ),
         const SizedBox(height: 16),
         moneyInCard(),
         const SizedBox(height: 10),

@@ -3,6 +3,7 @@ import 'package:nb_utils/nb_utils.dart';
 const String _tokenKey = 'token';
 const String _nameKey = 'name';
 const String _roleKey = 'role';
+const String _nimKey = 'nim';
 
 class SharedPrefUtil {
 
@@ -22,6 +23,14 @@ class SharedPrefUtil {
     return sharedPreferences.getString(_nameKey) ?? "";
   }
 
+  static void storeNim(String nim) async {
+    sharedPreferences.setString(_nimKey, nim);
+  }
+
+  static String getNim() {
+    return sharedPreferences.getString(_nimKey) ?? "";
+  }
+
   static void storeRole(String role) async {
     sharedPreferences.setString(_roleKey, role);
   }
@@ -29,5 +38,4 @@ class SharedPrefUtil {
   static String getRole() {
     return sharedPreferences.getString(_roleKey) ?? "";
   }
-
 }

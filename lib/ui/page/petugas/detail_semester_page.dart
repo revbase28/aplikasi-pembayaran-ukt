@@ -66,50 +66,44 @@ class _DetailSemesterPageState extends State<DetailSemesterPage> {
         child: Scaffold(
           body: ListView(
             children: [
-              Expanded(
-                child: Stack(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      height: 220,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(image: AssetImage("assets/img/bg_detail_semester.png"), fit: BoxFit.cover)
-                      ),
+              Stack(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 220,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(image: AssetImage("assets/img/bg_detail_semester.png"), fit: BoxFit.cover)
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 8, top: 8),
-                          child: BackIconButton(),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 8, top: 8),
+                        child: BackIconButton(),
+                      ),
+                      const SizedBox(height: 21),
+                      Padding(
+                        padding: EdgeInsets.only(left: defaultMargin, right: defaultMargin, bottom: defaultMargin),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Semester 1", style: whiteTextStyle.copyWith(fontWeight: medium, fontSize: 26)),
+                            const SizedBox(height: 4),
+                            Text("Tahun ajaran 2022/2023", style: whiteTextStyle),
+                            const SizedBox(height: 33),
+                            const ProgressBayarCard(value: "Rp. 20.000.000", percentage: 0.87),
+                            const SizedBox(height: 24),
+                            jurusanDropdown(),
+                            const SizedBox(height: 16),
+                            Text(dropdownvalue, style: blackTextStyle.copyWith(fontSize: 16)),
+                            const SizedBox(height: 20),
+                            const DetailProgressBayarMahasiswaItem(),
+                          ],
                         ),
-                        const SizedBox(height: 21),
-                        Padding(
-                          padding: EdgeInsets.only(left: defaultMargin, right: defaultMargin, bottom: defaultMargin),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Semester 1", style: whiteTextStyle.copyWith(fontWeight: medium, fontSize: 26)),
-                              const SizedBox(height: 4),
-                              Text("Tahun ajaran 2022/2023", style: whiteTextStyle),
-                              const SizedBox(height: 33),
-                              const ProgressBayarCard(value: "Rp. 20.000.000", percentage: 0.87),
-                              const SizedBox(height: 24),
-                              jurusanDropdown(),
-                              const SizedBox(height: 16),
-                              Text(dropdownvalue, style: blackTextStyle.copyWith(fontSize: 16)),
-                              const SizedBox(height: 20),
-                              const DetailProgressBayarMahasiswaItem(),
-                              const DetailProgressBayarMahasiswaItem(),
-                              const DetailProgressBayarMahasiswaItem(),
-                              const DetailProgressBayarMahasiswaItem(),
-                              const DetailProgressBayarMahasiswaItem()
-                            ],
-                          ),
-                        ),
-                      ],
-                    )],
-                ),
+                      ),
+                    ],
+                  )],
               )
             ],
           ),
