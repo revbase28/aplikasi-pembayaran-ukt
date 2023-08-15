@@ -19,4 +19,5 @@ class API {
   // End Point
   static const login = 'login';
   static const jurusan = 'petugas/jurusan';
+  static const historyTransaksi = 'mahasiswa/historiTransaksi';
 }

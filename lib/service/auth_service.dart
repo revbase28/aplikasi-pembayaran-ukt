@@ -5,11 +5,11 @@ import '../repository/auth_repository.dart';
 import '../repository/impl/auth_repository_impl.dart';
 
 class AuthService{
-  AuthRepository authRepo = AuthRepositoryImpl();
+  AuthRepository _authRepo = AuthRepositoryImpl();
 
   Future<LoginResponse?> login({required String username, required String password}) async {
     try{
-      LoginResponse? loginResponse = await authRepo.login(username, password);
+      LoginResponse? loginResponse = await _authRepo.login(username, password);
       if(loginResponse != null){
         SharedPrefUtil.storeRole(loginResponse.role!);
         SharedPrefUtil.storeName(loginResponse.data?.name ?? "");

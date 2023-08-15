@@ -5,6 +5,7 @@ import 'package:intl/intl.dart' as intl;
 import 'package:nb_utils/nb_utils.dart';
 
 import '../../../core/theme.dart';
+import '../../../core/tools/util.dart';
 import '../../widget/back_icon_button.dart';
 
 class PembayaranPage extends StatefulWidget {
@@ -20,8 +21,6 @@ class _PembayaranPageState extends State<PembayaranPage> {
 
   final TextEditingController _nominalController =
       TextEditingController(text: "Rp 0");
-  final formatCurrency =
-      intl.NumberFormat.currency(locale: 'id', symbol: 'Rp ', decimalDigits: 0);
 
   // List of items in our dropdown menu
   var items = [
@@ -59,7 +58,7 @@ class _PembayaranPageState extends State<PembayaranPage> {
                     _isPayAllChecked = value ?? false;
                   });
 
-                  if(_isPayAllChecked){
+                  if (_isPayAllChecked) {
                     String value = "Rp 7.000.000";
                     _nominalController.value = TextEditingValue(
                       text: value,
@@ -148,7 +147,7 @@ class _PembayaranPageState extends State<PembayaranPage> {
                               value.replaceAll("Rp ", "").replaceAll(".", "");
 
                           var formattedCurrency =
-                              formatCurrency.format(cleanedValue.toInt());
+                              Util.formatToIdr(cleanedValue.toInt());
                           _nominalController.value = TextEditingValue(
                             text: formattedCurrency,
                             selection: TextSelection.fromPosition(
@@ -160,9 +159,14 @@ class _PembayaranPageState extends State<PembayaranPage> {
                       const SizedBox(height: 8),
                       payAllCheckbox(),
                       const SizedBox(height: 20),
-                      GenericButton(buttonTitle: "Bayar", onPressed: () {
-                        print(_nominalController.text.replaceAll("Rp ", "").replaceAll(".", "").toInt());
-                      })
+                      GenericButton(
+                          buttonTitle: "Bayar",
+                          onPressed: () {
+                            print(_nominalController.text
+                                .replaceAll("Rp ", "")
+                                .replaceAll(".", "")
+                                .toInt());
+                          })
                     ],
                   )
                 : const SizedBox(),

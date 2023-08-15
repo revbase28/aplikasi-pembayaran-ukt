@@ -1,15 +1,69 @@
 import 'package:aplikasi_pembayaran_ukt/core/const.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/widget/generic_button.dart';
+import 'package:aplikasi_pembayaran_ukt/ui/widget/placeholder.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/widget/progress_bayar_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../../core/theme.dart';
 import '../../../cubit/auth_cubit.dart';
 
 class MahasiswaDashboardPage extends StatelessWidget {
   const MahasiswaDashboardPage({Key? key}) : super(key: key);
+
+  Widget screenLoadingState(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Shimmer.fromColors(
+            baseColor: kShimmerBaseColor,
+            highlightColor: kShimmerHighligtColor,
+            child: Container(
+              width: double.infinity,
+              height: 180,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white,
+              ),
+            )),
+        const SizedBox(height: 10),
+        Shimmer.fromColors(
+            baseColor: kShimmerBaseColor,
+            highlightColor: kShimmerHighligtColor,
+            child: Container(
+              width: double.infinity,
+              height: 55,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white,
+              ),
+            )),
+        const SizedBox(height: 12),
+        Shimmer.fromColors(
+            baseColor: kShimmerBaseColor,
+            highlightColor: kShimmerHighligtColor,
+            child: Container(
+              width: double.infinity,
+              height: 55,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white,
+              ),
+            )),
+        const SizedBox(height: 30),
+        SingleLinePlaceholder(lineWidth: 150, lineHeight: 25),
+        const SizedBox(height: 16),
+        ProgressBayarCardPlaceholder(),
+        ProgressBayarCardPlaceholder(),
+        ProgressBayarCardPlaceholder(),
+        ProgressBayarCardPlaceholder(),
+        ProgressBayarCardPlaceholder(),
+        ProgressBayarCardPlaceholder(),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +215,8 @@ class MahasiswaDashboardPage extends StatelessWidget {
                   },
                   outlineStyled: true),
               const SizedBox(height: 30),
-              progressPembayaran()
+              progressPembayaran(),
+              // screenLoadingState()
             ],
           ),
         ));

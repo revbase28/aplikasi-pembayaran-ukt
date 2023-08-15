@@ -4,8 +4,10 @@ import 'package:aplikasi_pembayaran_ukt/ui/widget/generic_button.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/widget/petugas_detail_per_semester_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../../cubit/auth_cubit.dart';
+import '../../widget/placeholder.dart';
 
 class PetugasDashboardPage extends StatelessWidget {
   const PetugasDashboardPage({Key? key}) : super(key: key);
@@ -36,6 +38,45 @@ class PetugasDashboardPage extends StatelessWidget {
       return AlertDialog(
         title: Text("Anda yakin ingin logout"),
         actions: [cancelButton, confirmButton],
+      );
+    }
+
+    Widget screenLoadingState(){
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Shimmer.fromColors(
+              baseColor: kShimmerBaseColor,
+              highlightColor: kShimmerHighligtColor,
+              child: Container(
+                width: double.infinity,
+                height: 110,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white,
+                ),
+              )),
+          const SizedBox(height: 10),
+          Shimmer.fromColors(
+              baseColor: kShimmerBaseColor,
+              highlightColor: kShimmerHighligtColor,
+              child: Container(
+                width: double.infinity,
+                height: 55,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white,
+                ),
+              )),
+          const SizedBox(height: 24),
+          SingleLinePlaceholder(lineWidth: 150, lineHeight: 25),
+          const SizedBox(height: 16),
+          PetugasDetailPerSemesterPlaceholder(),
+          PetugasDetailPerSemesterPlaceholder(),
+          PetugasDetailPerSemesterPlaceholder(),
+          PetugasDetailPerSemesterPlaceholder(),
+          PetugasDetailPerSemesterPlaceholder()
+        ],
       );
     }
 
@@ -154,7 +195,8 @@ class PetugasDashboardPage extends StatelessWidget {
             semester: 8,
             value: "Rp. 5.000.000",
             onDetailClick: () {},
-            percentage: 0.07),
+            percentage: 0.07)
+        // screenLoadingState()
       ],
     )));
   }
