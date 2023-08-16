@@ -5,8 +5,8 @@ class MahasiswaData {
       this.nim, 
       this.address, 
       this.phoneNumber, 
-      this.tahunAjaranId, 
-      this.jurusanId,});
+      this.tahunAjaran,
+      this.jurusan,});
 
   MahasiswaData.fromJson(dynamic json) {
     id = json['id'];
@@ -14,16 +14,19 @@ class MahasiswaData {
     nim = json['nim'];
     address = json['address'];
     phoneNumber = json['phoneNumber'];
-    tahunAjaranId = json['tahunAjaranId'];
-    jurusanId = json['jurusanId'];
+    tahunAjaran = json['tahunAjaran'];
+    jurusan = json['jurusan'];
+    semester = json['semester'];
   }
+
   int? id;
   String? name;
   String? nim;
   String? address;
   String? phoneNumber;
-  int? tahunAjaranId;
-  int? jurusanId;
+  String? tahunAjaran;
+  String? jurusan;
+  int? semester;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -32,8 +35,9 @@ class MahasiswaData {
     map['nim'] = nim;
     map['address'] = address;
     map['phoneNumber'] = phoneNumber;
-    map['tahunAjaranId'] = tahunAjaranId;
-    map['jurusanId'] = jurusanId;
+    map['tahunAjaran'] = tahunAjaran;
+    map['jurusan'] = jurusan;
+    map['semester'] = semester;
     return map;
   }
 

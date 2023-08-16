@@ -4,6 +4,7 @@ const String _tokenKey = 'token';
 const String _nameKey = 'name';
 const String _roleKey = 'role';
 const String _nimKey = 'nim';
+const String _semesterKey = 'semester';
 
 class SharedPrefUtil {
 
@@ -37,5 +38,13 @@ class SharedPrefUtil {
 
   static String getRole() {
     return sharedPreferences.getString(_roleKey) ?? "";
+  }
+
+  static void storeSemester(int semester) async {
+    sharedPreferences.setInt(_semesterKey, semester);
+  }
+
+  static int getSemester() {
+    return sharedPreferences.getInt(_semesterKey) ?? 0;
   }
 }

@@ -1,5 +1,7 @@
 import 'package:aplikasi_pembayaran_ukt/cubit/history_transaksi_cubit.dart';
 import 'package:aplikasi_pembayaran_ukt/cubit/jurusan_cubit.dart';
+import 'package:aplikasi_pembayaran_ukt/cubit/mahasiswa_dashboard_cubit.dart';
+import 'package:aplikasi_pembayaran_ukt/cubit/petugas_dashboard_cubit.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/page/login_page.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/page/mahasiswa/history_pembayaran_page.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/page/mahasiswa/lakukan_pembayaran_page.dart';
@@ -35,6 +37,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => AuthCubit()),
         BlocProvider(create: (context) => JurusanCubit()),
         BlocProvider(create: (context) => HistoryTransaksiCubit()),
+        BlocProvider(create: (context) => PetugasDashboardCubit()),
+        BlocProvider(create: (context) => MahasiswaDashboardCubit()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

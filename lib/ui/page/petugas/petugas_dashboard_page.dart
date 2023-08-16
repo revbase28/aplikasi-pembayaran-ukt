@@ -1,20 +1,34 @@
 import 'package:aplikasi_pembayaran_ukt/core/const.dart';
 import 'package:aplikasi_pembayaran_ukt/core/theme.dart';
+import 'package:aplikasi_pembayaran_ukt/cubit/petugas_dashboard_cubit.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/widget/generic_button.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/widget/petugas_detail_per_semester_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../core/tools/util.dart';
 import '../../../cubit/auth_cubit.dart';
+import '../../../model/petugas_dashboard/detail_per_semester.dart';
 import '../../widget/placeholder.dart';
 
-class PetugasDashboardPage extends StatelessWidget {
+class PetugasDashboardPage extends StatefulWidget {
   const PetugasDashboardPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  State<PetugasDashboardPage> createState() => _PetugasDashboardPageState();
+}
 
+class _PetugasDashboardPageState extends State<PetugasDashboardPage> {
+
+  @override
+  void initState() {
+    context.read<PetugasDashboardCubit>().getPetugasDahboardData();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     AlertDialog logOutConfirmationDialog() {
       Widget cancelButton = ElevatedButton(
         style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade500),
@@ -36,12 +50,12 @@ class PetugasDashboardPage extends StatelessWidget {
       );
 
       return AlertDialog(
-        title: Text("Anda yakin ingin logout"),
+        title: const Text("Anda yakin ingin logout"),
         actions: [cancelButton, confirmButton],
       );
     }
 
-    Widget screenLoadingState(){
+    Widget screenLoadingState() {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -69,18 +83,18 @@ class PetugasDashboardPage extends StatelessWidget {
                 ),
               )),
           const SizedBox(height: 24),
-          SingleLinePlaceholder(lineWidth: 150, lineHeight: 25),
+          const SingleLinePlaceholder(lineWidth: 150, lineHeight: 25),
           const SizedBox(height: 16),
-          PetugasDetailPerSemesterPlaceholder(),
-          PetugasDetailPerSemesterPlaceholder(),
-          PetugasDetailPerSemesterPlaceholder(),
-          PetugasDetailPerSemesterPlaceholder(),
-          PetugasDetailPerSemesterPlaceholder()
+          const PetugasDetailPerSemesterPlaceholder(),
+          const PetugasDetailPerSemesterPlaceholder(),
+          const PetugasDetailPerSemesterPlaceholder(),
+          const PetugasDetailPerSemesterPlaceholder(),
+          const PetugasDetailPerSemesterPlaceholder()
         ],
       );
     }
 
-    Widget moneyInCard() {
+    Widget moneyInCard(int value) {
       return Container(
         width: double.infinity,
         padding: const EdgeInsets.all(24),
@@ -100,7 +114,7 @@ class PetugasDashboardPage extends StatelessWidget {
             Text("Total Uang Masuk",
                 style: whiteTextStyle.copyWith(fontWeight: light)),
             FittedBox(
-              child: Text("Rp 280.000.000",
+              child: Text(Util.formatToIdr(value),
                   style: whiteTextStyle.copyWith(
                       fontWeight: semiBold, fontSize: 26)),
             )
@@ -118,7 +132,8 @@ class PetugasDashboardPage extends StatelessWidget {
           children: [
             Expanded(
               child: Text("Halo Petugas",
-                  style: blackTextStyle.copyWith(fontWeight: semiBold, fontSize: 24)),
+                  style: blackTextStyle.copyWith(
+                      fontWeight: semiBold, fontSize: 24)),
             ),
             const SizedBox(width: 8),
             IconButton(
@@ -131,72 +146,65 @@ class PetugasDashboardPage extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        moneyInCard(),
-        const SizedBox(height: 10),
-        GenericButton(
-            buttonTitle: 'Tambah Akun Mahasiswa',
-            child: (buttonTitle) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+        BlocBuilder<PetugasDashboardCubit, PetugasDashboardState>(
+          builder: (context, state) {
+            if (state is PetugasDashboardSuccess) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.add, color: kWhiteColor),
-                  const SizedBox(width: 4),
-                  Text(buttonTitle,
-                      style: whiteTextStyle.copyWith(
-                          fontSize: 18, fontWeight: medium))
+                  moneyInCard(state.data.totalUangMasuk!),
+                  const SizedBox(height: 10),
+                  GenericButton(
+                      buttonTitle: 'Tambah Akun Mahasiswa',
+                      child: (buttonTitle) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.add, color: kWhiteColor),
+                            const SizedBox(width: 4),
+                            Text(buttonTitle,
+                                style: whiteTextStyle.copyWith(
+                                    fontSize: 18, fontWeight: medium))
+                          ],
+                        );
+                      },
+                      onPressed: () {
+                        Navigator.pushNamed(
+                            context, RouteConsants.tambahAkunMhs);
+                      }),
+                  const SizedBox(height: 24),
+                  Text("Detail Per Semester",
+                      style: blackTextStyle.copyWith(
+                          fontWeight: semiBold, fontSize: 18)),
+                  const SizedBox(height: 16),
+                  Column(
+                    children: state.data.detailPerSemester!
+                        .map((DetailPerSemester item) =>
+                            PetugasDetailPerSemesterItem(
+                                semester: item.semester!,
+                                value: Util.formatToIdr(item.uangMasuk!),
+                                onDetailClick: () {},
+                                percentage: item.presentaseUangMasuk!))
+                        .toList(),
+                  )
                 ],
               );
-            },
-            onPressed: () {
-              Navigator.pushNamed(context, RouteConsants.tambahAkunMhs);
-            }),
-        const SizedBox(height: 24),
-        Text("Detail Per Semester",
-            style: blackTextStyle.copyWith(fontWeight: semiBold, fontSize: 18)),
-        const SizedBox(height: 16),
-        PetugasDetailPerSemesterItem(
-            semester: 1,
-            value: "Rp. 20.000.000",
-            onDetailClick: () {
-              Navigator.pushNamed(context, RouteConsants.detailSemester);
-            },
-            percentage: 0.3),
-        PetugasDetailPerSemesterItem(
-            semester: 2,
-            value: "Rp. 20.000.000.000.000.000",
-            onDetailClick: () {},
-            percentage: 1),
-        PetugasDetailPerSemesterItem(
-            semester: 3,
-            value: "Rp. 90.000.000",
-            onDetailClick: () {},
-            percentage: 0.5),
-        PetugasDetailPerSemesterItem(
-            semester: 4,
-            value: "Rp. 100.000",
-            onDetailClick: () {},
-            percentage: 0.1),
-        PetugasDetailPerSemesterItem(
-            semester: 5,
-            value: "Rp. 70.000",
-            onDetailClick: () {},
-            percentage: 0.1),
-        PetugasDetailPerSemesterItem(
-            semester: 6,
-            value: "Rp. 823.000.000",
-            onDetailClick: () {},
-            percentage: 0.6),
-        PetugasDetailPerSemesterItem(
-            semester: 7,
-            value: "Rp. 7.000.000",
-            onDetailClick: () {},
-            percentage: 0.11),
-        PetugasDetailPerSemesterItem(
-            semester: 8,
-            value: "Rp. 5.000.000",
-            onDetailClick: () {},
-            percentage: 0.07)
-        // screenLoadingState()
+            }
+
+            if (state is PetugasDashboardLoading) {
+              return screenLoadingState();
+            }
+
+            if (state is PetugasDashboardFailed) {
+              return Center(
+                child: Text(state.msg,
+                    style: redTextStyle),
+              );
+            }
+
+            return const SizedBox();
+          },
+        )
       ],
     )));
   }

@@ -20,4 +20,6 @@ class API {
   static const login = 'login';
   static const jurusan = 'petugas/jurusan';
   static const historyTransaksi = 'mahasiswa/historiTransaksi';
+  static const petugasDashboard = 'petugas/dashboard';
+  static const mahasiswaDashboard = 'mahasiswa/dashboard';
 }

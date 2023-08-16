@@ -15,6 +15,7 @@ class AuthService{
         SharedPrefUtil.storeName(loginResponse.data?.name ?? "");
         SharedPrefUtil.storeToken(loginResponse.token!);
         SharedPrefUtil.storeNim(loginResponse.data?.nim ?? "");
+        SharedPrefUtil.storeSemester(loginResponse.data?.semester ?? 0);
       }
 
       return loginResponse;

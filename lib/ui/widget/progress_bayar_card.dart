@@ -6,16 +6,18 @@ import 'package:flutter/material.dart';
 
 class ProgressBayarCard extends StatelessWidget {
   final int? semester;
-  final String value;
+  final String uangMasuk;
+  final String tunggakan;
   final double percentage;
   final String status;
 
   const ProgressBayarCard(
       {Key? key,
       this.semester,
-      required this.value,
+      required this.uangMasuk,
       required this.percentage,
-      this.status = StatusProgressBayarConstants.onProgress})
+      this.status = StatusProgressBayarConstants.onProgress,
+      required this.tunggakan})
       : super(key: key);
 
   @override
@@ -33,7 +35,8 @@ class ProgressBayarCard extends StatelessWidget {
         return Column(
           children: [
             Text("BELUM BISA DIBAYAR",
-                style: greyTextStyle.copyWith(fontWeight: semiBold, fontSize: 25))
+                style:
+                    greyTextStyle.copyWith(fontWeight: semiBold, fontSize: 25))
           ],
         );
       } else if (status == StatusProgressBayarConstants.lunas) {
@@ -51,13 +54,13 @@ class ProgressBayarCard extends StatelessWidget {
         children: [
           Text("Uang Masuk", style: blackTextStyle.copyWith(fontSize: 12)),
           FittedBox(
-              child: Text(value,
+              child: Text(uangMasuk,
                   style: blackTextStyle.copyWith(
                       fontSize: 20, fontWeight: semiBold, color: kGreenColor))),
           const SizedBox(height: 10),
           Text("Belum Dibayar", style: blackTextStyle.copyWith(fontSize: 12)),
           FittedBox(
-              child: Text(value,
+              child: Text(tunggakan,
                   style: blackTextStyle.copyWith(
                       fontSize: 20, fontWeight: semiBold, color: kRedColor))),
         ],
@@ -101,12 +104,18 @@ class ProgressBayarCard extends StatelessWidget {
                           PieChartSectionData(
                               value: percentage,
                               showTitle: false,
-                              color: status == StatusProgressBayarConstants.belumBisa ? kGreyColor : kGreenColor,
+                              color: status ==
+                                      StatusProgressBayarConstants.belumBisa
+                                  ? kGreyColor
+                                  : kGreenColor,
                               radius: 15),
                           PieChartSectionData(
                               value: 1 - percentage,
                               showTitle: false,
-                              color: status == StatusProgressBayarConstants.belumBisa ? kGreyColor : kRedColor,
+                              color: status ==
+                                      StatusProgressBayarConstants.belumBisa
+                                  ? kGreyColor
+                                  : kRedColor,
                               radius: 15),
                         ])),
                   ),

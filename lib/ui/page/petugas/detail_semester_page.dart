@@ -136,7 +136,7 @@ class _DetailSemesterPageState extends State<DetailSemesterPage> {
                         Text("Tahun ajaran 2022/2023", style: whiteTextStyle),
                         const SizedBox(height: 33),
                         const ProgressBayarCard(
-                            value: "Rp. 20.000.000", percentage: 0.87),
+                            uangMasuk: "Rp. 20.000.000", percentage: 0.87, tunggakan: 'Rp. 19.000.000',),
                         const SizedBox(height: 24),
                         jurusanDropdown(),
                         const SizedBox(height: 16),

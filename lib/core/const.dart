@@ -8,7 +8,7 @@ class RouteConsants{
 }
 
 class StatusProgressBayarConstants {
-  static const String lunas = 'lunas';
-  static const String onProgress = 'on progress';
-  static const String belumBisa = 'belum bisa dibayar';
+  static const String lunas = 'LUNAS';
+  static const String onProgress = 'BELUM LUNAS';
+  static const String belumBisa = 'BELUM BISA DIBAYAR';
 }
