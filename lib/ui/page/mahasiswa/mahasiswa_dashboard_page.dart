@@ -24,7 +24,7 @@ class MahasiswaDashboardPage extends StatefulWidget {
 class _MahasiswaDashboardPageState extends State<MahasiswaDashboardPage> {
 
   String tahunAjaran = "";
-
+  String semester = SharedPrefUtil.getSemester();
   @override
   void initState() {
     context.read<MahasiswaDashboardCubit>().getMahasiswaDahboardData();
@@ -132,7 +132,7 @@ class _MahasiswaDashboardPageState extends State<MahasiswaDashboardPage> {
                 style: whiteTextStyle.copyWith(
                     fontSize: 20, fontWeight: semiBold)),
             const SizedBox(height: 4),
-            Text("Semester ${SharedPrefUtil.getSemester()}",
+            Text(semester.isDigit() ? "Semester $semester" : semester,
                 style: whiteTextStyle),
             const SizedBox(height: 30),
             Text("Sisa Kewajiban Bayar",

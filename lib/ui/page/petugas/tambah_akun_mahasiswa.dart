@@ -1,10 +1,15 @@
 import 'package:aplikasi_pembayaran_ukt/core/theme.dart';
 import 'package:aplikasi_pembayaran_ukt/core/tools/debouncer.dart';
 import 'package:aplikasi_pembayaran_ukt/core/tools/random_string_gen.dart';
+import 'package:aplikasi_pembayaran_ukt/cubit/check_mhs_acc_cubit.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/widget/back_icon_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 import '../../../core/const.dart';
+import '../../../cubit/register_mhs_cubit.dart';
 import '../../widget/custom_form_field.dart';
 import '../../widget/generic_button.dart';
 
@@ -23,7 +28,7 @@ class _TambahAkunMahasiswaPageState extends State<TambahAkunMahasiswaPage> {
 
   final TextEditingController _passwordController = TextEditingController();
 
-  bool _showMhsData = false;
+  bool isAbleToSubmit = false;
 
   final Debouncer _debouncer = Debouncer(milliseconds: 1000);
 
@@ -53,37 +58,87 @@ class _TambahAkunMahasiswaPageState extends State<TambahAkunMahasiswaPage> {
                 textInputType: TextInputType.number,
                 onChanged: (value) {
                   _debouncer.run(() {
-                    if (value.isEmpty) {
-                      setState(() {
-                        _showMhsData = false;
-                      });
+                    if (value.isNotEmpty) {
+                      context.read<CheckMhsAccCubit>().checkMhsAccStatus(value);
                     } else {
-                      setState(() {
-                        _showMhsData = true;
-                      });
+                      context.read<CheckMhsAccCubit>().setStateToIntial();
                     }
                   });
                 },
               ),
-              _showMhsData
-                  ? Container(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      width: double.infinity,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+              BlocConsumer<CheckMhsAccCubit, CheckMhsAccState>(
+                listener: (context, state) {
+                  if (state is CheckMhsAccSuccess) {
+                    if (state.response.status != "DITEMUKAN") {
+                      setState(() {
+                        isAbleToSubmit = false;
+                      });
+                    } else {
+                      setState(() {
+                        isAbleToSubmit = true;
+                      });
+                    }
+                  } else {
+                    setState(() {
+                      isAbleToSubmit = false;
+                    });
+                  }
+                },
+                builder: (context, state) {
+                  if (state is CheckMhsAccSuccess) {
+                    if (state.response.status! != "DITEMUKAN") {
+                      return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: Text(
+                            state.response.status!,
+                            style: redTextStyle.copyWith(
+                                fontSize: 18, fontWeight: semiBold),
+                            textAlign: TextAlign.start,
+                          ));
+                    } else {
+                      return Column(
                         children: [
-                          Text("Nama Mahasiswa",
-                              style: blackTextStyle.copyWith(
-                                  fontSize: 18, fontWeight: semiBold)),
-                          const SizedBox(height: 4),
-                          Text("Jurusan Teknik Informatika",
-                              style: blackTextStyle),
-                          const SizedBox(height: 4),
-                          Text("Semester 2", style: blackTextStyle),
+                          Container(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            width: double.infinity,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(state.response.data!.nama!,
+                                    style: blackTextStyle.copyWith(
+                                        fontSize: 18, fontWeight: semiBold)),
+                                const SizedBox(height: 4),
+                                Text(state.response.data!.jurusan!,
+                                    style: blackTextStyle),
+                                const SizedBox(height: 4),
+                                Text(
+                                    state.response.data!.semester!.isDigit()
+                                        ? "Semester ${state.response.data!.semester!}"
+                                        : state.response.data!.semester!,
+                                    style: blackTextStyle),
+                              ],
+                            ),
+                          )
                         ],
-                      ),
-                    )
-                  : const SizedBox(),
+                      );
+                    }
+                  }
+
+                  if (state is CheckMhsAccLoading) {
+                    return Center(
+                      child: CircularProgressIndicator(color: kPrimaryColor),
+                    );
+                  }
+
+                  if (state is CheckMhsAccFailed) {
+                    return Center(
+                      child: Text(state.msg, style: redTextStyle),
+                    );
+                  }
+
+                  return const SizedBox();
+                },
+              ),
               CustomFormField(
                   isRequired: true,
                   fieldName: "Password",
@@ -102,21 +157,45 @@ class _TambahAkunMahasiswaPageState extends State<TambahAkunMahasiswaPage> {
                     );
                   }),
               const SizedBox(height: 12),
-              GenericButton(
-                  buttonTitle: "Tambah Akun",
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          backgroundColor: kGreenColor,
-                          content: Text("Berhasil Menambah Akun")));
+              BlocConsumer<RegisterMhsCubit, RegisterMhsState>(
+                listener: (context, state) {
+                  if (state is RegisterMhsSuccess) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        backgroundColor: kGreenColor,
+                        content: const Text("Berhasil Menambah Akun")));
 
-                      _nimController.text = "";
-                      _passwordController.text = "";
-                      setState(() {
-                        _showMhsData = false;
+                    _nimController.text = "";
+                    _passwordController.text = "";
+
+                    setState(() {
+                      isAbleToSubmit = false;
+                    });
+
+                    context.read<CheckMhsAccCubit>().setStateToIntial();
+                  }
+
+                  if (state is RegisterMhsFailed) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        backgroundColor: kRedColor, content: Text(state.msg)));
+                  }
+                },
+                builder: (context, state) {
+                  if (state is RegisterMhsLoading) {
+                    return Center(
+                        child: CircularProgressIndicator(color: kPrimaryColor));
+                  }
+
+                  return GenericButton(
+                      buttonTitle: "Tambah Akun",
+                      isEnabled: isAbleToSubmit,
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          context.read<RegisterMhsCubit>().registerMhs(
+                              _nimController.text, _passwordController.text);
+                        }
                       });
-                    }
-                  })
+                },
+              )
             ],
           ),
         ),

@@ -20,7 +20,7 @@ class NetworkHelper {
       stringBuffer.write('$key=$value&');
     });
     final result = stringBuffer.toString();
-
+    print("URL = ${result.substring(0, result.length - 1)}");
     //Delete last & character
     return result.substring(0, result.length - 1);
   }
@@ -30,6 +30,7 @@ class NetworkHelper {
     required http.Response response,
   }) {
     switch (response.statusCode) {
+      case 201:
       case 200: {
         return callBack(jsonDecode(response.body));
       }

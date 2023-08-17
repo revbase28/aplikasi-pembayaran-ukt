@@ -18,8 +18,10 @@ class API {
 
   // End Point
   static const login = 'login';
+  static const registerMhs = 'petugas/registerMhs';
   static const jurusan = 'petugas/jurusan';
   static const historyTransaksi = 'mahasiswa/historiTransaksi';
   static const petugasDashboard = 'petugas/dashboard';
   static const mahasiswaDashboard = 'mahasiswa/dashboard';
+  static const checkMhsAccStatus = 'petugas/mahasiswa';
 }

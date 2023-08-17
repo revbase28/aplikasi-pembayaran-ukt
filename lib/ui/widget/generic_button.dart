@@ -11,6 +11,7 @@ class GenericButton extends StatelessWidget {
   final EdgeInsets padding;
   final double radius;
   final bool outlineStyled;
+  final bool isEnabled;
 
   const GenericButton(
       {Key? key,
@@ -22,7 +23,8 @@ class GenericButton extends StatelessWidget {
       this.fontSize = 18,
       this.padding = const EdgeInsets.symmetric(vertical: 14),
       this.radius = 17,
-      this.outlineStyled = false})
+      this.outlineStyled = false,
+      this.isEnabled = true})
       : super(key: key);
 
   @override
@@ -31,7 +33,7 @@ class GenericButton extends StatelessWidget {
       width: width,
       height: height,
       child: ElevatedButton(
-          onPressed: onPressed,
+          onPressed: isEnabled ? onPressed : null,
           style: outlineStyled
               ? ElevatedButton.styleFrom(
                   backgroundColor: kWhiteColor,

@@ -16,7 +16,7 @@ class MahasiswaData {
     phoneNumber = json['phoneNumber'];
     tahunAjaran = json['tahunAjaran'];
     jurusan = json['jurusan'];
-    semester = json['semester'];
+    semester = json['semester'].toString();
   }
 
   int? id;
@@ -26,7 +26,7 @@ class MahasiswaData {
   String? phoneNumber;
   String? tahunAjaran;
   String? jurusan;
-  int? semester;
+  String? semester;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

@@ -40,11 +40,11 @@ class SharedPrefUtil {
     return sharedPreferences.getString(_roleKey) ?? "";
   }
 
-  static void storeSemester(int semester) async {
-    sharedPreferences.setInt(_semesterKey, semester);
+  static void storeSemester(String semester) async {
+    sharedPreferences.setString(_semesterKey, semester);
   }
 
-  static int getSemester() {
-    return sharedPreferences.getInt(_semesterKey) ?? 0;
+  static String getSemester() {
+    return sharedPreferences.getString(_semesterKey) ?? "";
   }
 }
