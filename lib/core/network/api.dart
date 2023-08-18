@@ -24,4 +24,7 @@ class API {
   static const petugasDashboard = 'petugas/dashboard';
   static const mahasiswaDashboard = 'mahasiswa/dashboard';
   static const checkMhsAccStatus = 'petugas/mahasiswa';
+  static const checkTagihan = 'mahasiswa/tagihan';
+  static const detailUktSemester = 'petugas/detailUktSemester';
+  static const bayarTagihan = 'mahasiswa/bayarTagihan';
 }

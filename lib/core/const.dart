@@ -5,6 +5,7 @@ class RouteConsants{
   static const String mahasiswaDashboardRoute = '/mahasiswa-dashboard';
   static const String pembayaran = '/pembayaran';
   static const String historyPembayaran = '/history-pembayaran';
+  static const String payment = '/payment-page';
 }
 
 class StatusProgressBayarConstants {

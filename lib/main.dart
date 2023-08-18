@@ -1,13 +1,18 @@
+import 'package:aplikasi_pembayaran_ukt/cubit/bayar_tagihan_cubit.dart';
 import 'package:aplikasi_pembayaran_ukt/cubit/check_mhs_acc_cubit.dart';
+import 'package:aplikasi_pembayaran_ukt/cubit/check_tagihan_cubit.dart';
+import 'package:aplikasi_pembayaran_ukt/cubit/detail_ukt_semester_cubit.dart';
 import 'package:aplikasi_pembayaran_ukt/cubit/history_transaksi_cubit.dart';
 import 'package:aplikasi_pembayaran_ukt/cubit/jurusan_cubit.dart';
 import 'package:aplikasi_pembayaran_ukt/cubit/mahasiswa_dashboard_cubit.dart';
 import 'package:aplikasi_pembayaran_ukt/cubit/petugas_dashboard_cubit.dart';
 import 'package:aplikasi_pembayaran_ukt/cubit/register_mhs_cubit.dart';
+import 'package:aplikasi_pembayaran_ukt/model/get_detail_ukt_semester/detail_ukt_semester_response.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/page/login_page.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/page/mahasiswa/history_pembayaran_page.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/page/mahasiswa/lakukan_pembayaran_page.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/page/mahasiswa/mahasiswa_dashboard_page.dart';
+import 'package:aplikasi_pembayaran_ukt/ui/page/mahasiswa/payment_page.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/page/petugas/detail_semester_page.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/page/petugas/petugas_dashboard_page.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/page/petugas/tambah_akun_mahasiswa.dart';
@@ -43,6 +48,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => MahasiswaDashboardCubit()),
         BlocProvider(create: (context) => CheckMhsAccCubit()),
         BlocProvider(create: (context) => RegisterMhsCubit()),
+        BlocProvider(create: (context) => CheckTagihanCubit()),
+        BlocProvider(create: (context) => DetailUktSemesterCubit()),
+        BlocProvider(create: (context) => BayarTagihanCubit()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -57,6 +65,7 @@ class MyApp extends StatelessWidget {
           RouteConsants.pembayaran: (context) => const PembayaranPage(),
           RouteConsants.historyPembayaran: (context) =>
               const HistoryPembayaranPage(),
+          RouteConsants.payment: (context) => const PaymentPage()
         },
       ),
     );

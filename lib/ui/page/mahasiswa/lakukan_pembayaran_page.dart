@@ -1,11 +1,16 @@
+import 'package:aplikasi_pembayaran_ukt/core/const.dart';
+import 'package:aplikasi_pembayaran_ukt/cubit/bayar_tagihan_cubit.dart';
+import 'package:aplikasi_pembayaran_ukt/cubit/bayar_tagihan_cubit.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/widget/custom_form_field.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/widget/generic_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:nb_utils/nb_utils.dart';
 
 import '../../../core/theme.dart';
 import '../../../core/tools/util.dart';
+import '../../../cubit/check_tagihan_cubit.dart';
 import '../../widget/back_icon_button.dart';
 
 class PembayaranPage extends StatefulWidget {
@@ -16,30 +21,22 @@ class PembayaranPage extends StatefulWidget {
 }
 
 class _PembayaranPageState extends State<PembayaranPage> {
-  // Initial Selected Value
-  String dropdownvalue = 'Pilih Semester';
-
   final TextEditingController _nominalController =
       TextEditingController(text: "Rp 0");
 
-  // List of items in our dropdown menu
-  var items = [
-    'Pilih Semester',
-    'Semester 1',
-    'Semester 2',
-    'Semester 3',
-    'Semester 4',
-    'Semester 5',
-    'Semester 6',
-    'Semester 7',
-    'Semester 8',
-  ];
-
   bool _isPayAllChecked = false;
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    context.read<CheckTagihanCubit>().checkTagihan();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    Widget payAllCheckbox() {
+    Widget payAllCheckbox(int tagihan) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -59,11 +56,11 @@ class _PembayaranPageState extends State<PembayaranPage> {
                   });
 
                   if (_isPayAllChecked) {
-                    String value = "Rp 7.000.000";
+                    String stringTagihan = Util.formatToIdr(tagihan);
                     _nominalController.value = TextEditingValue(
-                      text: value,
+                      text: stringTagihan,
                       selection: TextSelection.fromPosition(
-                        TextPosition(offset: value.length),
+                        TextPosition(offset: stringTagihan.length),
                       ),
                     );
                   }
@@ -73,36 +70,6 @@ class _PembayaranPageState extends State<PembayaranPage> {
           Text("Bayar seluruh kewajiban",
               style: blackTextStyle.copyWith(fontSize: 12))
         ],
-      );
-    }
-
-    Widget dropdown() {
-      return Container(
-        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
-        width: double.infinity,
-        decoration: BoxDecoration(
-            color: kWhiteColor,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: kInactiveColor)),
-        child: DropdownButton(
-          isExpanded: true,
-          value: dropdownvalue,
-          icon: const Icon(Icons.keyboard_arrow_down),
-          style: blackTextStyle.copyWith(fontSize: 16),
-          underline: const SizedBox(),
-          focusColor: kPrimaryColor,
-          items: items.map((String items) {
-            return DropdownMenuItem(
-              value: items,
-              child: Text(items, overflow: TextOverflow.ellipsis),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {
-            setState(() {
-              dropdownvalue = newValue!;
-            });
-          },
-        ),
       );
     }
 
@@ -119,58 +86,123 @@ class _PembayaranPageState extends State<PembayaranPage> {
                   blurRadius: 5,
                   blurStyle: BlurStyle.outer)
             ]),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Pilih Semester", style: blackTextStyle),
-            const SizedBox(height: 6),
-            dropdown(),
-            const SizedBox(height: 20),
-            dropdownvalue != "Pilih Semester"
-                ? Column(
+        child: BlocBuilder<CheckTagihanCubit, CheckTagihanState>(
+          builder: (context, checkTagihanState) {
+            if (checkTagihanState is CheckTagihanSuccess) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Semester ${checkTagihanState.response.semester!}",
+                      style: blackTextStyle.copyWith(
+                          fontSize: 25, fontWeight: semiBold)),
+                  const SizedBox(height: 20),
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text("Kewajiban Bayar"),
                       const SizedBox(height: 4),
                       FittedBox(
-                          child: Text("Rp 7.000.000",
+                          child: Text(
+                              Util.formatToIdr(
+                                  checkTagihanState.response.tagihan!),
                               style: redTextStyle.copyWith(
                                   fontSize: 25, fontWeight: semiBold))),
                       const SizedBox(height: 20),
-                      CustomFormField(
-                        isRequired: true,
-                        fieldName: "Nominal Bayar",
-                        textInputType: TextInputType.number,
-                        controller: _nominalController,
-                        onChanged: (value) {
-                          var cleanedValue =
-                              value.replaceAll("Rp ", "").replaceAll(".", "");
+                      Form(
+                        key: _formKey,
+                        child: CustomFormField(
+                          isRequired: true,
+                          fieldName: "Nominal Bayar",
+                          textInputType: TextInputType.number,
+                          controller: _nominalController,
+                          onChanged: (value) {
+                            var cleanedValue =
+                                value.replaceAll("Rp ", "").replaceAll(".", "");
 
-                          var formattedCurrency =
-                              Util.formatToIdr(cleanedValue.toInt());
-                          _nominalController.value = TextEditingValue(
-                            text: formattedCurrency,
-                            selection: TextSelection.fromPosition(
-                              TextPosition(offset: formattedCurrency.length),
-                            ),
-                          );
-                        },
+                            var formattedCurrency =
+                                Util.formatToIdr(cleanedValue.toInt());
+                            _nominalController.value = TextEditingValue(
+                              text: formattedCurrency,
+                              selection: TextSelection.fromPosition(
+                                TextPosition(offset: formattedCurrency.length),
+                              ),
+                            );
+                          },
+                          validator: (value) {
+                            var intValue = value
+                                ?.replaceAll("Rp ", "")
+                                .replaceAll(".", "")
+                                .toInt(defaultValue: 0);
+
+                            if (intValue == 0) {
+                              return "Masukan nominal bayar";
+                            }
+
+                            if (intValue! >
+                                checkTagihanState.response.tagihan!) {
+                              return "Nominal terlalu besar";
+                            }
+
+                            return null;
+                          },
+                        ),
                       ),
                       const SizedBox(height: 8),
-                      payAllCheckbox(),
+                      payAllCheckbox(checkTagihanState.response.tagihan!),
                       const SizedBox(height: 20),
-                      GenericButton(
-                          buttonTitle: "Bayar",
-                          onPressed: () {
-                            print(_nominalController.text
-                                .replaceAll("Rp ", "")
-                                .replaceAll(".", "")
-                                .toInt());
-                          })
+                      BlocConsumer<BayarTagihanCubit, BayarTagihanState>(
+                        listener: (context, state) {
+                          if (state is BayarTagihanSuccess) {
+                            Navigator.pushNamed(context, RouteConsants.payment,
+                                arguments: state.response.snapToken!);
+                          } else if (state is BayarTagihanFailed) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                backgroundColor: kRedColor,
+                                content: Text(state.msg)));
+                          }
+                        },
+                        builder: (context, state) {
+                          if (state is BayarTagihanLoading) {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                  color: kPrimaryColor),
+                            );
+                          }
+
+                          return GenericButton(
+                              buttonTitle: "Bayar",
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  context
+                                      .read<BayarTagihanCubit>()
+                                      .bayarTagihan(
+                                          checkTagihanState.response.semester!,
+                                          _nominalController.text
+                                              .replaceAll("Rp ", "")
+                                              .replaceAll(".", "")
+                                              .toInt());
+                                }
+                              });
+                        },
+                      )
                     ],
-                  )
-                : const SizedBox(),
-          ],
+                  ),
+                ],
+              );
+            }
+
+            if (checkTagihanState is CheckTagihanLoading) {
+              return Center(
+                  child: CircularProgressIndicator(color: kPrimaryColor));
+            }
+
+            if (checkTagihanState is CheckTagihanFailed) {
+              return Center(
+                  child: Text(checkTagihanState.msg, style: redTextStyle));
+            }
+
+            return const SizedBox();
+          },
         ),
       );
     }

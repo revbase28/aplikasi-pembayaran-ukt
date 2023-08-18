@@ -183,7 +183,9 @@ class _PetugasDashboardPageState extends State<PetugasDashboardPage> {
                             PetugasDetailPerSemesterItem(
                                 semester: item.semester!,
                                 value: Util.formatToIdr(item.uangMasuk!),
-                                onDetailClick: () {},
+                                onDetailClick: () {
+                                  Navigator.pushNamed(context, RouteConsants.detailSemester, arguments: item);
+                                },
                                 percentage: item.presentaseUangMasuk!))
                         .toList(),
                   )

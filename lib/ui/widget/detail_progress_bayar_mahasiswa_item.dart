@@ -2,7 +2,20 @@ import 'package:aplikasi_pembayaran_ukt/core/theme.dart';
 import 'package:flutter/material.dart';
 
 class DetailProgressBayarMahasiswaItem extends StatelessWidget {
-  const DetailProgressBayarMahasiswaItem({Key? key}) : super(key: key);
+  final String namaMahasiswa;
+  final String uangMasuk;
+  final String tunggakan;
+  final double persentaseSelesai;
+  final String tahunAjaran;
+
+  const DetailProgressBayarMahasiswaItem(
+      {Key? key,
+      required this.namaMahasiswa,
+      required this.uangMasuk,
+      required this.tunggakan,
+      required this.persentaseSelesai,
+      required this.tahunAjaran})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +35,13 @@ class DetailProgressBayarMahasiswaItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Nama Mahasiswa",
+          Text(namaMahasiswa,
               style:
                   blackTextStyle.copyWith(fontWeight: semiBold, fontSize: 18)),
+          const SizedBox(height: 4),
+          Text("Tahun ajaran $tahunAjaran",
+              style:
+                  blackTextStyle.copyWith(fontSize: 14)),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -38,7 +55,7 @@ class DetailProgressBayarMahasiswaItem extends StatelessWidget {
                         style: greyTextStyle.copyWith(
                             fontWeight: light, fontSize: 12)),
                     FittedBox(
-                        child: Text("Rp. 19.000.000.000.000.000.000",
+                        child: Text(uangMasuk,
                             style: greenTextStyle.copyWith(
                                 fontWeight: medium, fontSize: 16))),
                     const SizedBox(height: 8),
@@ -46,7 +63,7 @@ class DetailProgressBayarMahasiswaItem extends StatelessWidget {
                         style: greyTextStyle.copyWith(
                             fontWeight: light, fontSize: 12)),
                     FittedBox(
-                        child: Text("Rp. 19.000.000",
+                        child: Text(tunggakan,
                             style: redTextStyle.copyWith(
                                 fontWeight: medium, fontSize: 16)))
                   ],
@@ -58,7 +75,7 @@ class DetailProgressBayarMahasiswaItem extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 10),
                   child: Column(
                     children: [
-                      Text("87%",
+                      Text("${(persentaseSelesai * 100).toInt()}%",
                           style: purpleTextStyle.copyWith(
                               fontWeight: semiBold, fontSize: 30)),
                       Text("Persentase\nSelesai Bayar",

@@ -99,10 +99,13 @@ class _CustomFormFieldState extends State<CustomFormField> {
                     : null),
             validator: (String? value) {
               if ((value == null || value.isEmpty) && widget.isRequired) {
+                print("Called");
                 return 'Please enter some text';
               }
 
+              print("Called here");
               if (widget.validator != null) {
+                print("Called validator");
                 return widget.validator!(value);
               }
 

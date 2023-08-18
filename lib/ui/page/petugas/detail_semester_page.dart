@@ -1,11 +1,15 @@
 import 'package:aplikasi_pembayaran_ukt/core/theme.dart';
 import 'package:aplikasi_pembayaran_ukt/cubit/auth_cubit.dart';
+import 'package:aplikasi_pembayaran_ukt/cubit/detail_ukt_semester_cubit.dart';
+import 'package:aplikasi_pembayaran_ukt/model/get_detail_ukt_semester/detail_ukt_semester_data.dart';
+import 'package:aplikasi_pembayaran_ukt/model/petugas_dashboard/detail_per_semester.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/widget/back_icon_button.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/widget/detail_progress_bayar_mahasiswa_item.dart';
 import 'package:aplikasi_pembayaran_ukt/ui/widget/progress_bayar_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/tools/util.dart';
 import '../../../cubit/jurusan_cubit.dart';
 import '../../../model/get_jurusan/jurusan.dart';
 
@@ -21,22 +25,18 @@ class _DetailSemesterPageState extends State<DetailSemesterPage> {
   int dropdownvalue = 0;
   String dropdownValueText = '';
 
-  // List of items in our dropdown menu
-  var items = [
-    'Teknik Informatika',
-    'Teknik Pertambangan dan Kelautan',
-    'Bisnis dan Usaha Kecil Menengah',
-  ];
-
-
   @override
   void initState() {
     context.read<JurusanCubit>().getJurusanList();
+    context.read<DetailUktSemesterCubit>().setToInitialState();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as DetailPerSemester;
+
     Widget jurusanDropdown() {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -47,20 +47,23 @@ class _DetailSemesterPageState extends State<DetailSemesterPage> {
           const SizedBox(width: 10),
           BlocConsumer<JurusanCubit, JurusanState>(
             listener: (context, state) {
-              if(state is JurusanSuccess){
+              if (state is JurusanSuccess) {
                 setState(() {
                   dropdownvalue = state.jurusanList[0].id!;
                   dropdownValueText = state.jurusanList[0].name!;
                 });
+
+                context.read<DetailUktSemesterCubit>().getDetailUktSemester(
+                    args.semester!.toString(),
+                    state.jurusanList[0].id!.toString());
               }
-              // TODO: When success get detail ukt data for item[0]
             },
             builder: (context, state) {
-              if(state is JurusanSuccess){
+              if (state is JurusanSuccess) {
                 return Expanded(
                   child: Container(
                     padding:
-                    const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+                        const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
                     decoration: BoxDecoration(
                         color: kWhiteColor,
                         borderRadius: BorderRadius.circular(10),
@@ -74,25 +77,37 @@ class _DetailSemesterPageState extends State<DetailSemesterPage> {
                       items: state.jurusanList.map((Jurusan items) {
                         return DropdownMenuItem(
                           value: items.id,
-                          child: Text(items.name!, overflow: TextOverflow.ellipsis),
+                          child: Text(items.name!,
+                              overflow: TextOverflow.ellipsis),
                         );
                       }).toList(),
                       onChanged: (int? newValue) {
                         setState(() {
                           dropdownvalue = newValue!;
-                          dropdownValueText = state.jurusanList.firstWhere((element) => element.id == newValue).name!;
+                          dropdownValueText = state.jurusanList
+                              .firstWhere((element) => element.id == newValue)
+                              .name!;
                         });
+
+                        context
+                            .read<DetailUktSemesterCubit>()
+                            .getDetailUktSemester(args.semester!.toString(),
+                                newValue!.toString());
                       },
                     ),
                   ),
                 );
-              } else if(state is AuthLoading) {
+              } else if (state is JurusanLoading) {
                 return Center(
                   child: CircularProgressIndicator(color: kPrimaryColor),
                 );
-              } else {
-                return const SizedBox();
+              } else if (state is JurusanFailed) {
+                return Center(
+                  child: Text(state.msg, style: redTextStyle),
+                );
               }
+
+              return const SizedBox();
             },
           ),
         ],
@@ -129,21 +144,74 @@ class _DetailSemesterPageState extends State<DetailSemesterPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Semester 1",
+                        Text("Semester ${args.semester!}",
                             style: whiteTextStyle.copyWith(
                                 fontWeight: medium, fontSize: 26)),
-                        const SizedBox(height: 4),
-                        Text("Tahun ajaran 2022/2023", style: whiteTextStyle),
                         const SizedBox(height: 33),
-                        const ProgressBayarCard(
-                            uangMasuk: "Rp. 20.000.000", percentage: 0.87, tunggakan: 'Rp. 19.000.000',),
+                        ProgressBayarCard(
+                          uangMasuk: Util.formatToIdr(args.uangMasuk!),
+                          percentage: args.presentaseUangMasuk!,
+                          tunggakan: Util.formatToIdr(args.tunggakan!),
+                        ),
                         const SizedBox(height: 24),
                         jurusanDropdown(),
                         const SizedBox(height: 16),
                         Text(dropdownValueText,
                             style: blackTextStyle.copyWith(fontSize: 16)),
                         const SizedBox(height: 20),
-                        const DetailProgressBayarMahasiswaItem(),
+                        BlocBuilder<DetailUktSemesterCubit,
+                            DetailUktSemesterState>(
+                          builder: (context, state) {
+                            if (state is DetailUktSemesterSuccess) {
+                              if (state.response.data!.isEmpty) {
+                                return Column(
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      height: 150,
+                                      decoration: const BoxDecoration(
+                                          image: DecorationImage(
+                                              image: AssetImage(
+                                                  "assets/img/ill_empty.png"),
+                                              fit: BoxFit.fitHeight)),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      "Tidak ada data",
+                                      style: purpleTextStyle.copyWith(
+                                          fontWeight: semiBold, fontSize: 16),
+                                    )
+                                  ],
+                                );
+                              }
+                              return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: state.response.data!
+                                      .map((DetailUktSemesterData e) =>
+                                          DetailProgressBayarMahasiswaItem(
+                                            namaMahasiswa: e.nama!,
+                                            uangMasuk:
+                                                Util.formatToIdr(e.uangMasuk!),
+                                            tunggakan:
+                                                Util.formatToIdr(e.tunggakan!),
+                                            persentaseSelesai:
+                                                e.presentaseUangMasuk!,
+                                            tahunAjaran: e.tahunAjaran!,
+                                          ))
+                                      .toList());
+                            } else if (state is DetailUktSemesterLoading) {
+                              return Center(
+                                child: CircularProgressIndicator(
+                                    color: kPrimaryColor),
+                              );
+                            } else if (state is DetailUktSemesterFailed) {
+                              return Center(
+                                child: Text(state.msg, style: redTextStyle),
+                              );
+                            }
+                            return const SizedBox();
+                          },
+                        )
                       ],
                     ),
                   ),

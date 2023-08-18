@@ -45,6 +45,8 @@ dependencies:
   intl: ^0.18.1
   shimmer: ^3.0.0
   flutter_masked_text2: ^0.9.1
+  midtrans_snap: ^0.0.3
+  webview_flutter: ^4.2.2
 
 dev_dependencies:
   flutter_test:

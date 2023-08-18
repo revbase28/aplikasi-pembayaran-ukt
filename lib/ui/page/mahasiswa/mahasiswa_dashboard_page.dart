@@ -71,14 +71,14 @@ class _MahasiswaDashboardPageState extends State<MahasiswaDashboardPage> {
               ),
             )),
         const SizedBox(height: 30),
-        SingleLinePlaceholder(lineWidth: 150, lineHeight: 25),
+        const SingleLinePlaceholder(lineWidth: 150, lineHeight: 25),
         const SizedBox(height: 16),
-        ProgressBayarCardPlaceholder(),
-        ProgressBayarCardPlaceholder(),
-        ProgressBayarCardPlaceholder(),
-        ProgressBayarCardPlaceholder(),
-        ProgressBayarCardPlaceholder(),
-        ProgressBayarCardPlaceholder(),
+        const ProgressBayarCardPlaceholder(),
+        const ProgressBayarCardPlaceholder(),
+        const ProgressBayarCardPlaceholder(),
+        const ProgressBayarCardPlaceholder(),
+        const ProgressBayarCardPlaceholder(),
+        const ProgressBayarCardPlaceholder(),
       ],
     );
   }
@@ -106,7 +106,7 @@ class _MahasiswaDashboardPageState extends State<MahasiswaDashboardPage> {
       );
 
       return AlertDialog(
-        title: Text("Anda yakin ingin logout"),
+        title: const Text("Anda yakin ingin logout"),
         actions: [cancelButton, confirmButton],
       );
     }

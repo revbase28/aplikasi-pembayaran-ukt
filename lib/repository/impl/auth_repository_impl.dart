@@ -47,7 +47,6 @@ class AuthRepositoryImpl extends AuthRepository {
 
   @override
   Future<RegisterMhsResponse?> register(String nim, String password) async {
-
     try {
       final response = await NetworkService.sendRequest(
           requestType: RequestType.post,
